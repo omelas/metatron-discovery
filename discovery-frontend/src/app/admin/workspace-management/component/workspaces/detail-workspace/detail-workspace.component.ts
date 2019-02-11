@@ -12,14 +12,14 @@
  * limitations under the License.
  */
 
-import { AbstractComponent } from '../../../../../common/component/abstract.component';
-import { Component, ElementRef, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Modal } from '../../../../../common/domain/modal';
-import { ConfirmModalComponent } from '../../../../../common/component/modal/confirm/confirm.component';
-import { PublicType, WorkspaceAdmin } from '../../../../../domain/workspace/workspace';
-import { Alert } from '../../../../../common/util/alert.util';
-import { WorkspaceService } from '../../../../../workspace/service/workspace.service';
+import {AbstractComponent} from '../../../../../common/component/abstract.component';
+import {Component, ElementRef, Injector, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {Modal} from '../../../../../common/domain/modal';
+import {ConfirmModalComponent} from '../../../../../common/component/modal/confirm/confirm.component';
+import {PublicType, WorkspaceAdmin} from '../../../../../domain/workspace/workspace';
+import {Alert} from '../../../../../common/util/alert.util';
+import {WorkspaceService} from '../../../../../workspace/service/workspace.service';
 
 @Component({
   selector: 'app-detail-workspace',
@@ -33,6 +33,9 @@ export class DetailWorkspaceComponent extends AbstractComponent implements OnIni
 
   // 워크스페이스 아이디
   private _workspaceId: string;
+
+  // 검색 파라메터
+  private _listSearchParams: { [key: string]: string };
 
   // 공통 팝업 모달
   @ViewChild(ConfirmModalComponent)
@@ -65,7 +68,7 @@ export class DetailWorkspaceComponent extends AbstractComponent implements OnIni
               private activatedRoute: ActivatedRoute,
               protected element: ElementRef,
               protected injector: Injector) {
-   super(element, injector);
+    super(element, injector);
   }
 
   /*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -75,8 +78,15 @@ export class DetailWorkspaceComponent extends AbstractComponent implements OnIni
   // Init
   public ngOnInit() {
 
-   // Init
-   super.ngOnInit();
+    // Init
+    super.ngOnInit();
+
+    // 쿼리 파라메터 저장
+    this.activatedRoute.queryParams.subscribe(params => {
+      console.info( '>>>>>>> detail param', params );
+      this._listSearchParams = params;
+    });
+
     // url에서 workspaceId 받아오기
     this.activatedRoute.params.subscribe((params) => {
       // sourceId
@@ -91,8 +101,8 @@ export class DetailWorkspaceComponent extends AbstractComponent implements OnIni
   // Destory
   public ngOnDestroy() {
 
-   // Destory
-   super.ngOnDestroy();
+    // Destory
+    super.ngOnDestroy();
   }
 
   /*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -142,9 +152,12 @@ export class DetailWorkspaceComponent extends AbstractComponent implements OnIni
     const url = this.cookieService.get('PREV_ROUTER_URL');
     if (url) {
       this.cookieService.delete('PREV_ROUTER_URL');
-      this.router.navigate([url]);
+      this.router.navigate([url]).then();
     } else {
-      this.router.navigate(['/admin/workspaces/shared']);
+      this.router.navigate(
+        ['/admin/workspaces/shared'],
+        {queryParams: this._listSearchParams}
+      ).then();
     }
   }
 
@@ -157,12 +170,11 @@ export class DetailWorkspaceComponent extends AbstractComponent implements OnIni
 
   /**
    * 워크스페이스 status 변경 모달오픈
-   * @param {WorkspaceAdmin} WorkspaceAdmin
    * @param {string} status
    */
   public onOpenChangeStatus(status: string): void {
 
-    if( ( this.workspace.active ? 'active' : 'inactive' ) === status ) {
+    if ((this.workspace.active ? 'active' : 'inactive') === status) {
       return;
     }
 
@@ -287,8 +299,8 @@ export class DetailWorkspaceComponent extends AbstractComponent implements OnIni
     this.workspace = new WorkspaceAdmin();
     // status
     this.statusList = [
-      { label: this.translateService.instant('msg.spaces.spaces.ui.active'), value: 'active' },
-      { label: this.translateService.instant('msg.spaces.spaces.ui.inactive'), value: 'inactive' },
+      {label: this.translateService.instant('msg.spaces.spaces.ui.active'), value: 'active'},
+      {label: this.translateService.instant('msg.spaces.spaces.ui.inactive'), value: 'inactive'},
     ];
     // TODO 선택된 status
     this.selectedStatus = this.statusList[0];

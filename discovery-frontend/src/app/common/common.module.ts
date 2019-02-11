@@ -60,7 +60,7 @@ import { DashboardDatasourceComboComponent } from '../dashboard/component/dashbo
 import { ColorTemplateComponent } from './component/color-picker/color-template.component';
 import {InputComponent} from "./component/input/input.component";
 import {SvgIconComponent} from "./component/icon/svg-icon.component";
-
+import {PaginationComponent} from "./component/pagination/pagination.component";
 
 @NgModule({
   imports: [
@@ -107,7 +107,8 @@ import {SvgIconComponent} from "./component/icon/svg-icon.component";
     DashboardDatasourceComboComponent,
     ColorTemplateComponent,
     SvgIconComponent,
-    InputComponent
+    InputComponent,
+    PaginationComponent
   ],
   exports: [
     AngularCommonModule,
@@ -152,7 +153,8 @@ import {SvgIconComponent} from "./component/icon/svg-icon.component";
     DashboardDatasourceComboComponent,
     ColorTemplateComponent,
     SvgIconComponent,
-    InputComponent
+    InputComponent,
+    PaginationComponent
   ],
   providers: [
     {
